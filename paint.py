@@ -38,5 +38,5 @@ def disturbance(folderpath,path_o):
 			plt.scatter(times,distostore[k],marker='+',c='r',s=1)
 			x+=distostore[k]
 		plt.scatter(times,x/100.0,marker='o',c='b')
-	a.close()
+	a.close(
 	plt.show()
