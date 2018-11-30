@@ -16,7 +16,7 @@ def disturbance(folderpath,path_o):
 	dir_num=len(listdir)
 	bcmostore = Bcm().calc_folder(path_o)
 	bcmostore=bcmostore[0][0]
-	for i in range(1,dir_num+1):
+	for i in range(1,dir_num):
 		times=i
 		filepath='%s/file_%d' % (folderpath,i)
 		bcmstore = []
@@ -34,9 +34,9 @@ def disturbance(folderpath,path_o):
 			a.write('\n')
 		a.write('\n\n\n')
 		x=0
-		for ll in range(100):
-			plt.scatter(times,distostore[ll],marker='+',c='r',s=1)
-			x+=distostore[ll]
+		for k in range(100):
+			plt.scatter(times,distostore[k],marker='+',c='r',s=1)
+			x+=distostore[k]
 		plt.scatter(times,x/100.0,marker='o',c='b')
 	a.close()
 	plt.show()
