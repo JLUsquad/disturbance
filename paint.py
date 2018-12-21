@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 import os
 
 
-def disturbance(folderpath,path_o):
+def BCM_distance(folderpath,path_o):
 	a=open('disturbance.txt','w')
 	listdir_o=os.listdir(folderpath)
 	listdir=[]
@@ -40,3 +40,35 @@ def disturbance(folderpath,path_o):
 		plt.scatter(times,x/100.0,marker='o',c='b')
 	a.close()
 	plt.show()
+
+def glosim_distance(structure_path):
+	
+	'''k=0
+	for root,dirs,files in os.walk(structure_path):
+		for file in files:
+			try:
+				test = Read(file)
+			except Exception:
+				continue
+			k += 1
+			filepath='''
+
+	x_list=os.listdir(structure_path)
+	structure_path='/home/chenzhaoxv/Desktop/1/POSCAR'
+	x_num=len(x_list)
+	dir_list=[]
+	file_list=[]
+	for i in range(x_num):
+		x_list[i]=structure_path+'/'+str(x_list[i]) 
+		print x_list[i]
+		if os.path.isdir(x_list[i]):
+			dir_list.append(x_list[i])
+	dir_num=len(dir_list)
+	os.chdir('%s') % structure_path
+	for i in range(dir_num):
+		fd=os.open(dir_list[i],os.O_RDONLY)
+		os.fchdir(fd)
+		print "dir:%s" % os.getcwd()
+
+		os.close(fd)
+
