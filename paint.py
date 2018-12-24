@@ -1,12 +1,14 @@
+#coding: utf-8
+
 import sys
 sys.path.append('/home/chenzhaoxv/BCM/BCM/BCM')
-#from pbcm import Bcm
+from pbcm import Bcm
 from matplotlib import pyplot as plt
 import os
 from read import Read
 import numpy as np
+import shutil
 
-'''
 def BCM_distance(folderpath,path_o):
 	a=open('disturbance.txt','w')
 	listdir_o=os.listdir(folderpath)
@@ -41,7 +43,7 @@ def BCM_distance(folderpath,path_o):
 			x+=distostore[k]
 		plt.scatter(times,x/100.0,marker='o',c='b')
 	a.close()
-	plt.show()'''
+	plt.show()
 
 def glosim_distance(structure_path):
 	
@@ -66,18 +68,20 @@ def glosim_distance(structure_path):
 		if os.path.isdir(x_list[i]):
 			dir_list.append(x_list[i])
 	#进入某一结构的目录，包含原结构及子文件夹中的扰动结构
+	print dir_list
 	dir_num=len(dir_list)
+	
 
 	for i in range(dir_num):
 		os.chdir(dir_list[i])
 		cwd=os.getcwd()
 		print "dir:%s" % cwd
-		y_list=os.listdir()
+		y_list=os.listdir(dir_list[i])
 		print y_list
 		y_num=len(y_list)
+		disturbance_dir=[]
 		for j in range (y_num):
-			disturbance_dir=[]
-			y_list[j]=cwd + str(y_list[j])
+			y_list[j]=cwd + '/' + str(y_list[j])
 			print y_list[j]
 			#扰动结构文件夹
 			if os.path.isdir(y_list[j]):
@@ -85,44 +89,86 @@ def glosim_distance(structure_path):
 			#结构原型文件
 			elif y_list[j].endswith('.vasp'):
 				poscar=Read(y_list[j]).getStructure()
-				xyz_coor=poscar['positions']*poscar['lattice']
-				xyz_coor=np.mat(xyz_coor)
+				xyz_coor=np.mat(poscar['positions'])*np.mat(poscar['lattice'])
 				xyz_numbers=len(poscar['positions'])
+				xyz_explain=str(poscar['elements'])+str(poscar['numbers'])
 
-			if xyz_numbers != np.shape(xyz_coor)[0]:
-				print "file has mistake"
+				if xyz_numbers != np.shape(xyz_coor)[0]:
+					print "file has mistake"
+		print disturbance_dir
 
 		disturbance_dir_num=len(disturbance_dir)
 		#生成xyz文件夹
+		xyz_dir_list=[]
 		for k in range(1,1+disturbance_dir_num):
-			xyz_dir=cwd + 'xyz_file_%d' % k
+			xyz_dir=dir_list[i] + '/' + 'xyz_file_%d' % k
 			folder=os.path.exists(xyz_dir)
 			if not folder:
-				os.mkdir(folder)
+				os.mkdir(xyz_dir)
+				xyz_dir_list.append(xyz_dir)
 			else:
 				pass
 		#在扰动结构文件夹中生成xyz文件
-		for j in range(1,1+disturbance_dir):
-			os.chdir(disturbance_dir[j])
-			file_list=os.path.isdir('%s') % os.getcwd()
+		for o in range(1,1+disturbance_dir_num):
+			os.chdir(disturbance_dir[o])
+			file_list=os.listdir(os.getcwd())
 			file_num=len(file_list)
 			cwd_file=os.getcwd()
-			for k in range(1,1+file_num):
+			print cwd_file
+			
+			for p in range(1,21):
+				if str(cwd_file).endswith(str(p)):
+					break
+				else:
+					p += 1
+			temp=p
+			for l in range(1,1+file_num):
 				#写出结构原型的xyz形式
-				filename_xyz='%s/Coordinate(%d_%d).xyz' % cwd_file,j,k
+				filename_xyz='%s/Coordinate(%d_%d).xyz' % (cwd_file,temp,l)
 				fp_xyz=open(filename_xyz,'w')
 				fp_xyz.write(str(xyz_numbers))
 				fp_xyz.write('\n')
+				fp_xyz.write(str(xyz_explain))
 				fp_xyz.write('\n')
-				for atom_num in range(xyz_numbers):
-					for atom_position in range(np.shape(xyz_numbers)[1]):
+				for atom_num in range(np.shape(xyz_coor)[0]):
+					for atom_position in range(np.shape(xyz_coor)[1]):
 						fp_xyz.write(str(xyz_coor[atom_num,atom_position]))
-						fp_xyz.write( )
+						fp_xyz.write(' ')
 					fp_xyz.write('\n')
 				#写出扰动结构的xyz形式
-				filename_vasp='%s/Coordinate(%d_%d).vasp' % cwd_file,j,k
+				filename_vasp='%s/Coordinate(%d_%d).vasp' % (cwd_file,temp,l)
 				fp_vasp=open(filename_vasp,'r')
-				lines_list=fp_vasp.readlines()
+				line=0
+				lattice_m=np.shape(np.mat(poscar['lattice']))[0]
+				disturbance_xyz_lattice=[]
+				distirbance_xyz_positions=[]
+				for line in fp_vasp.readlines():
+					line +=1
+					if line>2 and line<3+lattice_m:
+						line=line.split()
+						disturbance_xyz_lattice.append(line)
+					elif line>5+lattice_m and line<=5+lattice_m+xyz_numbers:
+						line=line.split()
+						distirbance_xyz_positions.append(line)
+				fp_vasp.close()
+				disturbance_xyz_lattice=np.mat(disturbance_xyz_lattice)
+				distirbance_xyz_positions=np.mat(distirbance_xyz_positions)
+				distirbance_xyz_positions=distirbance_xyz_positions*disturbance_xyz_lattice
+				fp_xyz.write(str(xyz_numbers))
+				fp_xyz.write('\n')
+				fp_xyz.write(str(filename_vasp))
+				fp_xyz.write('\n')
+				for atom_number in range(np.shape(distirbance_xyz_positions)[0]):
+					for atom_position in range(np.shape(distirbance_xyz_positions)[1]):
+						fp_xyz.write(str(distirbance_xyz_positions[atom_number,atom_position]))
+						fp_xyz.write(' ')
+					fp_xyz.write('\n')
+				fp_xyz.close()
+				shutil.move('%s','%s') % filename_xyz,xyz_dir[j]
+
+
+
+					
 				
 				
 				
