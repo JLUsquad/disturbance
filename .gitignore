@@ -1,0 +1,4 @@
+*.pyc
+*.txt
+/file_vasp/*
+/file_xyz/*

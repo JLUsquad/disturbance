@@ -13,7 +13,7 @@ from read import Read
 import math
 PI=3.1415926
 
-def disturbance(path):
+def disturbance(path,strength=20,index=40.0):
 	poscar=Read(path).getStructure()
 	
 	'''
@@ -29,6 +29,8 @@ def disturbance(path):
 	n_atoms为原子数
 	elements为元素列表
 	numbers为对应的元素原子数目列表
+	strength控制扰动强度
+	index控制扰动精度
 	'''
 
 	filetype=poscar['type']
@@ -48,18 +50,18 @@ def disturbance(path):
 	#coor_1,coor_2为原子的直角坐标
 
 	
-	for i in range(1,21):
+	for i in range(1,strength+1):
 	#20轮扰动测试,一轮更比一轮强
-		disturbance_path='./file_%d'%i
-		xyz_path='./file_xyz_%d' % i
+		disturbance_path='./file_vasp/file_%d'%i
+		xyz_path='./file_xyz/file_xyz_%d' % i
 		folder_xyz=os.path.exists(xyz_path)
 		if not folder_xyz:
-			os.mkdir(xyz_path)
+			os.makedirs(xyz_path)
 		else:
 			pass
 		folder=os.path.exists(disturbance_path)
 		if not folder:
-			os.mkdir(disturbance_path)
+			os.makedirs(disturbance_path)
 		else:
 			pass
 		j=1
@@ -74,9 +76,9 @@ def disturbance(path):
 			random_mat_0[:,1]=PI*random_mat_0[:,1]
 			random_mat=np.mat(np.ones((n_atoms,3)))
 			for k in range(n_atoms):
-				random_mat[k,0]=k/40.0*math.sin(random_mat_0[k,1])*math.cos(random_mat_0[k,0])
-				random_mat[k,1]=k/40.0*math.sin(random_mat_0[k,1])*math.sin(random_mat_0[k,0])
-				random_mat[k,2]=k/40.0*math.cos(random_mat_0[k,1])
+				random_mat[k,0]=i/index*math.sin(random_mat_0[k,1])*math.cos(random_mat_0[k,0])
+				random_mat[k,1]=i/index*math.sin(random_mat_0[k,1])*math.sin(random_mat_0[k,0])
+				random_mat[k,2]=i/index*math.cos(random_mat_0[k,1])
 			
 			#生成与直角坐标对应的扰动矩阵
 			coor_2=coor_2+random_mat
