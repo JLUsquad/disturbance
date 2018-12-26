@@ -159,6 +159,12 @@ def disturbance(path,strength=20,index=40.0):
 			
 			j += 1
 
-			newdir='./%s/' % file_name
+			newdir='./%s/o' % file_name
+			#结构原型文件夹
+			folder_newdir=os.path.exists(newdir)
+			if not folder_newdir:
+				os.makedirs(newdir)
+			else:
+				pass
 	
 	shutil.copy(path,newdir)

@@ -10,6 +10,8 @@ import numpy as np
 import shutil
 
 def BCM_distance(folderpath,path_o):
+	#folder-file——vasp文件夹
+	#path_o——结构原型的文件夹
 	a=open('disturbance.txt','w')
 	listdir_o=os.listdir(folderpath)
 	listdir=[]
@@ -46,9 +48,10 @@ def BCM_distance(folderpath,path_o):
 	a.close()
 	plt.show()
 
-def glosim_distance(structure_path):
+#def glosim_distance(structure_path):
 	
-	'''k=0
+	'''
+	k=0
 	for root,dirs,files in os.walk(structure_path):
 		for file in files:
 			try:
@@ -56,7 +59,7 @@ def glosim_distance(structure_path):
 			except Exception:
 				continue
 			k += 1
-			filepath='''
+			filepath=
 	#列出所有文件和目录名的列表
 	x_list=os.listdir(structure_path)
 	structure_path='/home/chenzhaoxv/Desktop/1/POSCAR'
@@ -166,6 +169,7 @@ def glosim_distance(structure_path):
 					fp_xyz.write('\n')
 				fp_xyz.close()
 				shutil.move('%s','%s') % filename_xyz,xyz_dir[j]
+	'''
 
 
 
