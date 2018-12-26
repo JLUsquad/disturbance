@@ -11,6 +11,7 @@ import sys
 import os
 from read import Read
 import math
+import shutil
 PI=3.1415926
 
 def disturbance(path,strength=20,index=40.0):
@@ -49,11 +50,13 @@ def disturbance(path,strength=20,index=40.0):
 	n_atoms=np.shape(coor_0)[0]
 	#coor_1,coor_2为原子的直角坐标
 
+	file_name=os.path.basename(path)
+
 	
 	for i in range(1,strength+1):
 	#20轮扰动测试,一轮更比一轮强
-		disturbance_path='./file_vasp/file_%d'%i
-		xyz_path='./file_xyz/file_xyz_%d' % i
+		disturbance_path='./%s/file_vasp/file_%d' % (file_name,i)
+		xyz_path='./%s/file_xyz/file_xyz_%d' % (file_name,i)
 		folder_xyz=os.path.exists(xyz_path)
 		if not folder_xyz:
 			os.makedirs(xyz_path)
@@ -155,3 +158,7 @@ def disturbance(path,strength=20,index=40.0):
 				
 			
 			j += 1
+
+			newdir='./%s/' % file_name
+	
+	shutil.copy(path,newdir)
