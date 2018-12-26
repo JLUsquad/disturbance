@@ -2,3 +2,4 @@
 *.txt
 /file_vasp/*
 /file_xyz/*
+git rm -r --cached file_name/dir
