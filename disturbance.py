@@ -14,10 +14,11 @@ import math
 import shutil
 PI=3.1415926
 
-def disturbance(path,strength=20,index=40.0):
+def disturbance(path,way='C',strength=20,index=40.0):
 	poscar=Read(path).getStructure()
 	
 	'''
+	way扰动方式：'C'直角扰动，'P'极坐标扰动
 	poscar={'comment':comment,
 				'lattice':lattice,
 				'elements':elements,
@@ -72,16 +73,18 @@ def disturbance(path,strength=20,index=40.0):
 		#每次扰动测试进行100次
 			
 			coor_2=coor_1.copy()
-			#random_mat=(np.mat(np.random.rand(n_atoms,3))-0.5)*i/40.0
-			
-			random_mat_0=np.mat(np.random.rand(n_atoms,2))
-			random_mat_0[:,0]=2*PI*random_mat_0[:,0]
-			random_mat_0[:,1]=PI*random_mat_0[:,1]
-			random_mat=np.mat(np.ones((n_atoms,3)))
-			for k in range(n_atoms):
-				random_mat[k,0]=i/index*math.sin(random_mat_0[k,1])*math.cos(random_mat_0[k,0])
-				random_mat[k,1]=i/index*math.sin(random_mat_0[k,1])*math.sin(random_mat_0[k,0])
-				random_mat[k,2]=i/index*math.cos(random_mat_0[k,1])
+
+			if way == 'C':
+				random_mat=(np.mat(np.random.rand(n_atoms,3))-0.5)*i/index
+			elif way == 'P':
+				random_mat_0=np.mat(np.random.rand(n_atoms,2))
+				random_mat_0[:,0]=2*PI*random_mat_0[:,0]
+				random_mat_0[:,1]=PI*random_mat_0[:,1]
+				random_mat=np.mat(np.ones((n_atoms,3)))
+				for k in range(n_atoms):
+					random_mat[k,0]=i/index*math.sin(random_mat_0[k,1])*math.cos(random_mat_0[k,0])
+					random_mat[k,1]=i/index*math.sin(random_mat_0[k,1])*math.sin(random_mat_0[k,0])
+					random_mat[k,2]=i/index*math.cos(random_mat_0[k,1])
 			
 			#生成与直角坐标对应的扰动矩阵
 			coor_2=coor_2+random_mat
