@@ -1,6 +1,6 @@
 import os
 
-path_xyz='/home/chenzhaoxv/Desktop/analysis_C/1-ICSD-2513.vasp/file_xyz'
+path_xyz='/home/chenzhaoxv/Desktop/analysis_C/1-ICSD-56224.vasp/file_xyz'
 
 filelist = []
 for root,dirs,files in os.walk(path_xyz):
